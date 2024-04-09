@@ -106,11 +106,11 @@ app.post("/login", async (req, res) => {
     }
 
     const token = generateToken(email);
-    //console.log(token)
+    console.log(token)
 
     res.cookie("jwt", token, {
       expires: new Date(Date.now() + 3600000),
-      // httpOnly: true,
+      httpOnly: true,
       secure: true,
       sameSite: "lax",
     }); // Cookie expires in 1 hour0
@@ -119,6 +119,7 @@ app.post("/login", async (req, res) => {
       role: user.role,
       blockStatus: user.blockStatus,
     });
+console.log("login success");
   } catch (error) {
     console.error("Error during sign in:", error);
     res.status(500).json({ message: "Internal server error" });
