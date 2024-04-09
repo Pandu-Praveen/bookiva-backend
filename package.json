@@ -2,15 +2,15 @@
   "name": "bookiva-backend-pandu",
   "version": "1.0.0",
   "description": "",
-  "main": "web_server.js",
+  "main": "index.js",
   "engines": {
     "node": "20.x"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node web_server.js",
-    "dev": "nodemon web_server.js",
-    "build": "node web_server.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "node index.js"
   },
   "keywords": [],
   "author": "",
