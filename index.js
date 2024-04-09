@@ -86,7 +86,7 @@ mongoose
   })
   .catch((err) => console.error("MongoDB connection error:", err));
 
-module.exports = mongoose.connection;
+// module.exports = mongoose.connection;
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
