@@ -260,7 +260,7 @@ app.get("/venues", verifyToken, async (req, res) => {
   }
 });
 
-app.get("/", venueToken, (req, res) => {
+app.get("/", (req, res) => {
   // req.session.isAuth = true;
   res.status(418).json({ message: "This is Server side" });
 });
