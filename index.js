@@ -91,7 +91,7 @@ app.post("/login", async (req, res) => {
     const token = generateToken(email);
     console.log(token)
 
-    res.cookie("jwt", token, {
+    res.cookie("jwts", token, {
       expires: new Date(Date.now() + 3600000),
       httpOnly: true,
       secure: true,
@@ -156,13 +156,13 @@ const verifyToken = (req, res, next) => {
   // console.log("verify",token)
 
   if (!token) {
-    res.clearCookie("jwt");
+    res.clearCookie("jwts");
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   jwt.verify(token, "gowthampraveeninbookivaproject", (err, decoded) => {
     if (err) {
-      res.clearCookie("jwt");
+      res.clearCookie("jwts");
       return res.status(401).json({ message: "Invalid token" });
     }
 
@@ -1222,7 +1222,7 @@ app.post("/reason", verifyToken, async (req, res) => {
 });
 
 app.get("/logout", (req, res) => {
-  res.status(200).clearCookie("jwt");
+  res.status(200).clearCookie("jwts");
   res.status(200).json({ message: "Logout successful" });
 });
 
