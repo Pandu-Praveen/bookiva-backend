@@ -229,24 +229,6 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-const venueToken = (req, res, next) => {
-  const token = req.cookies.jwt;
-
-  // console.log("verify",token)
-
-  if (!token) {
-    return res.status(401).json({ message: "Go to /login" });
-  }
-
-  jwt.verify(token, "gowthampraveeninbookivaproject", (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Invalid token" });
-    }
-
-    req.email = decoded.email;
-    next();
-  });
-};
 
 app.get("/venues", verifyToken, async (req, res) => {
   try {
