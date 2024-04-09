@@ -79,7 +79,7 @@ const upload = multer({
 mongoose
   .connect(
     "mongodb+srv://pandukar98:pandu@cluster0.yt9ia3t.mongodb.net/mern",
-    {}
+     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => {
     console.log("MongoDB connected");
