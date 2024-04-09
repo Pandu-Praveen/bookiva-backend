@@ -244,7 +244,7 @@ app.get("/venues", verifyToken, async (req, res) => {
 
 app.get("/", (req, res) => {
   // req.session.isAuth = true;
-  res.status(418).json({ message: "This is Server side" });
+  res.status(200).json({ message: "This is Server side" });
 });
 
 app.get("/admin", verifyToken, async (req, res) => {
