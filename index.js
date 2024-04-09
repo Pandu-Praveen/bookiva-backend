@@ -18,7 +18,7 @@ const uuid = require("uuid").v4;
 // const crypto = require('crypto');
 // const session = require('express-session')
 const cookieParser = require("cookie-parser");
-const logEvents = require("./middleware/logEvents");
+
 
 const Grid = require("gridfs-stream");
 
@@ -45,23 +45,6 @@ app.use(
     credentials: true,
   })
 );
-// app.use(session({
-//   secret:"bookivabackendsecretkeyforsignin",
-//   resave:false,
-//   saveUninitialized:false
-
-// }))
-
-app.use((req, res, next) => {
-  try {
-    logEvents(`${req.method}\t${req.headers.origin}\t${req.url}`);
-    // console.log(`${req.method}\t${req.headers.origin}\t${req.url}`);
-    next();
-  } catch (error) {
-    console.error("Error in middleware:", error);
-    next(error); // Pass the error to the next middleware or error handler
-  }
-});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -130,48 +113,6 @@ function generateToken(email) {
   return jwt.sign({ email }, secretKey, { expiresIn: "1h" });
 }
 
-// app.post('/signin', async (req, res) => {
-//   const { email, password } = req.body;
-
-//   try {
-//       // Find user by email
-//       const user = await UserModel.findOne({ email });
-
-//       if (!user) {
-//           // User not found
-//           return res.status(404).json({ message: 'Invalid email or password' });
-//       }
-//       const isMatch = await bcrypt.compare(password,user.password);
-
-//       // Check if the password matches
-//       if (!isMatch) {
-//           // Password doesn't match
-//           return res.status(401).json({ message: 'Invalid password' });
-//       }
-
-//       const token = generateToken(email);
-//       // console.log(token)
-
-//       res.cookie("jwt",token,{
-//         expires:new Date(Date.now() + 3600000),
-//         httpOnly:true,
-//         secure:true,
-//         sameSite:'lax'
-//       })
-
-//       res.status(200).json({ message: 'Sign in successful' });
-
-//   } catch (error) {
-//       console.error('Error during sign in:', error);
-//       res.status(500).json({ message: 'Internal server error' });
-//   }
-
-// });
-
-// function generateToken(email){
-//   const secret='gowthampraveeninbookivaproject';
-//   return jwt.sign({email},secret,{expiresIn:'1h'});
-// }
 
 app.post("/register", async (req, res) => {
   try {
