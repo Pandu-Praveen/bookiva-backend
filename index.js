@@ -851,7 +851,7 @@ app.post("/userdata", verifyToken, async (req, res) => {
   }
 });
 
-app.get("/profile", verifyToken, async (req, res) => {
+app.get("/profile", async (req, res) => {
   const jwtToken = req.cookies.jwt;
   // console.log(jwtToken);
   try {
