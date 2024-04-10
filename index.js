@@ -1223,10 +1223,10 @@ app.post("/reason", verifyToken, async (req, res) => {
 
 app.get("/logout", (req, res) => {
   // console.log(req.cookies.jwt);
-  const { EMAIL } = req.body;
-  const token = generateToken(EMAIL);
-  res.cookie("jwt", token, {
-    expires: new Date(Date.now()),
+  // const { EMAIL } = req.body;
+  // const token = generateToken(EMAIL);
+  res.cookie("jwt", '', {
+    expires: new Date(0),
     httpOnly: true,
     secure: true,
     sameSite: "none",
