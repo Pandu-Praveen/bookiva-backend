@@ -875,7 +875,7 @@ app.get("/profile", verifyToken, async (req, res) => {
       blockStatus: user.blockStatus,
     });
   } catch (error) {
-    res.status(401).json({ message: "Unauthorized" });
+    res.json({ message: "Unauthorized" });
   }
 });
 
