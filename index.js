@@ -1222,7 +1222,13 @@ app.post("/reason", verifyToken, async (req, res) => {
 });
 
 app.get("/logout", (req, res) => {
-  console.log(req.cookies.jwt)
+  // console.log(req.cookies.jwt)
+  res.cookie("jwt", token, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
   res.status(200).clearCookie("jwt").json({ message: "Logout successful" });
   // res.status(200).json({ message: "Logout successful" });
 });
