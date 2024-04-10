@@ -94,7 +94,7 @@ app.post("/login", async (req, res) => {
     res.cookie("jwt", token, {
       expires: new Date(Date.now() + 3600000),
       httpOnly: true,
-      // secure: true,
+      secure: true,
       sameSite: "none",
     }); // Cookie expires in 1 hour0
     res.json({
