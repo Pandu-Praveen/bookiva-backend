@@ -1223,6 +1223,8 @@ app.post("/reason", verifyToken, async (req, res) => {
 
 app.get("/logout", (req, res) => {
   // console.log(req.cookies.jwt);
+  const decoded = jwt.verify(jwtToken, "gowthampraveeninbookivaproject");
+  const { email } = decoded;
   const token = generateToken(email);
   res.cookie("jwt", token, {
     expires: new Date(Date.now()),
