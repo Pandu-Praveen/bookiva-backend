@@ -1231,7 +1231,7 @@ app.get("/logout", (req, res) => {
     secure: true,
     sameSite: "none",
   });
-  res.status(200).clearCookie("jwt").json({ message: "Logout successful" });
+  //res.status(200).clearCookie("jwt").json({ message: "Logout successful" });
   // res.status(200).json({ message: "Logout successful" });
 });
 
