@@ -1236,7 +1236,7 @@ app.post(
       }
 
       // Store the URL of the first image in the venue's imgUrl field
-      venue.imgUrl = `http://localhost:3500/download/${firstImageId}`;
+      venue.imgUrl = `https://bookiva-backend.vercel.app/download/${firstImageId}`;
 
       // Save the venue to MongoDB after all files are uploaded
       await venue.save();
