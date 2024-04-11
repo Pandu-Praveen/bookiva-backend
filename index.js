@@ -18,11 +18,17 @@ const uuid = require("uuid").v4;
 // const crypto = require('crypto');
 // const session = require('express-session')
 const cookieParser = require("cookie-parser");
-
+const firebase = require("firebase-admin");
+const serviceAccount = require("./serviceAccountKey.json");
 
 const Grid = require("gridfs-stream");
 
 let gfs;
+
+firebase.initializeApp({
+  credential: firebase.credential.cert(serviceAccount),
+  databaseURL: "https://pandu-caa50-default-rtdb.firebaseio.com/", // Your Firebase Realtime Database URL
+});
 
 const conn = mongoose.connection;
 conn.once("open", () => {
@@ -45,6 +51,37 @@ app.use(
     credentials: true,
   })
 );
+
+// Middleware to log requests to Firebase RTDB
+app.use((req, res, next) => {
+  const logRef = firebase.database().ref("logs").push(); // Create a new child node under 'logs'
+  logRef
+    .set({
+      timestamp: new Date().toISOString(),
+      method: req.method,
+      url: req.url,
+    })
+    .then(() => {
+      console.log("Log saved to Firebase RTDB");
+      next();
+    })
+    .catch((error) => {
+      console.error("Error saving log:", error);
+      next();
+    });
+});
+
+// Endpoint to get all logs
+app.get("/logs", async (req, res) => {
+  try {
+    const logsSnapshot = await firebase.database().ref("logs").once("value");
+    const logs = logsSnapshot.val();
+    res.json(logs);
+  } catch (error) {
+    console.error("Error fetching logs:", error);
+    res.status(500).send("Error fetching logs");
+  }
+});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
