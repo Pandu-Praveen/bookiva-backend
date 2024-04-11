@@ -406,6 +406,7 @@ app.use((req, res, next) => {
 
 // Endpoint to get logs
 app.get('/logs', (req, res) => {
+  console.log(logs);
     res.json(logs);
 });
 
