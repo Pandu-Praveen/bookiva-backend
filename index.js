@@ -87,13 +87,14 @@ app.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid password" });
     }
-    res.json({
-      message: "Login successful",
-      role: user.role,
-      blockStatus: user.blockStatus,
-    });
      if (user.blockStatus) {
-      return res.status(401).json({ message: "User Blocked By ADMIN" });
+      return res
+        .status(401)
+        .json({
+          message: "User Blocked By ADMIN",
+          role: user.role,
+          blockStatus: user.blockStatus,
+        });
     }
 
     const token = generateToken(email);
@@ -105,7 +106,12 @@ app.post("/login", async (req, res) => {
       secure: true,
       sameSite: "none",
     }); // Cookie expires in 1 hour0
-console.log("login success");
+    res.json({
+      message: "Login successful",
+      role: user.role,
+      blockStatus: user.blockStatus,
+    });
+
   } catch (error) {
     console.error("Error during sign in:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -1247,6 +1253,7 @@ app.get("/logout", (req, res) => {
 
 app.get("/summa", (req, res) => {
   res.json({ message: "summa" });
+  res.json({ message: "second summa" });
 });
 
 app.listen(PORT, () => {
