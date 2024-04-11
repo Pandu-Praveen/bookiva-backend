@@ -394,30 +394,19 @@ app.post("/book", verifyToken, async (req, res) => {
   }
 });
 
-app.get("/logs", verifyToken, (req, res) => {
-  try {
-    // Read the log file
-    const logFilePath = path.join(__dirname, "logs", "reqLog.txt");
-    const logs = fs.readFileSync(logFilePath, "utf8");
+let logs = [];
 
-    // Split logs into an array of lines
-    const logLines = logs.split("\n");
+// Middleware to log requests
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    // Add log entry to the array
+    logs.push(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+});
 
-    // Parse log lines and format them as needed
-    const formattedLogs = logLines.map((line, index) => {
-      const [date, time, uuid, method, url, route] = line.split("\t");
-
-      return { date, time, uuid, method, url, route };
-    });
-    // console.log(formattedLogs);
-
-    // Send the formatted logs as JSON response
-    res.json(formattedLogs);
-  } catch (err) {
-    // Handle errors
-    console.error("Error fetching logs:", err);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
+// Endpoint to get logs
+app.get('/logs', (req, res) => {
+    res.json(logs);
 });
 
 app.get("/allUsers", verifyToken, async (req, res) => {
