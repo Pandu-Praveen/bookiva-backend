@@ -1223,7 +1223,7 @@ app.post(
               contentType: file.mimetype,
             });
             venue.carouselPics.push(
-              `http://localhost:3500/download/${writeStream.id}`
+              `https://bookiva-backend.vercel.app/download/${writeStream.id}`
             );
             if (index === 0) {
               // If it's the first image, store its ID
