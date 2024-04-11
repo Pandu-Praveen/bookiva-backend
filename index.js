@@ -1225,7 +1225,7 @@ app.get("/logout", (req, res) => {
   // console.log(req.cookies.jwt);
   // const { EMAIL } = req.body;
   // const token = generateToken(EMAIL);
-   res.status(200).clearCookie("jwt",{
+   res.clearCookie("jwt",{
      httpOnly: true,
      secure: true,
      sameSite: "none"
