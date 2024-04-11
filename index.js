@@ -1222,9 +1222,6 @@ app.post("/reason", verifyToken, async (req, res) => {
 });
 
 app.get("/logout", (req, res) => {
-  // console.log(req.cookies.jwt);
-  // const { EMAIL } = req.body;
-  // const token = generateToken(EMAIL);
   res.clearCookie("jwt", {
     httpOnly: true,
     secure: true,
@@ -1232,18 +1229,6 @@ app.get("/logout", (req, res) => {
   });
   res.set('Cache-Control', 'no-store'); // Prevent caching
   res.json({ message: "Logout successful" });
-
-  // req.session.destroy();
-
-// Set the cookie with the specified options
-// res.cookie("jwt", token, {
-//   expires: new Date('2024-01-01'),
-//   httpOnly: true,
-//   secure: true,
-//   sameSite: "none"
-// });
-  //res.status(200).clearCookie("jwt").json({ message: "Logout successful" });
-  // res.status(200).json({ message: "Logout successful" });
 });
 
 
