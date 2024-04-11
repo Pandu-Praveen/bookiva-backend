@@ -156,13 +156,23 @@ const verifyToken = (req, res, next) => {
   // console.log("verify",token)
 
   if (!token) {
-    res.clearCookie("jwt");
+     res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
+  });
+  res.set('Cache-Control', 'no-store');
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   jwt.verify(token, "gowthampraveeninbookivaproject", (err, decoded) => {
     if (err) {
-      res.clearCookie("jwt");
+       res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
+  });
+  res.set('Cache-Control', 'no-store');
       return res.status(401).json({ message: "Invalid token" });
     }
 
