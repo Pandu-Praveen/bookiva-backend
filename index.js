@@ -87,6 +87,9 @@ app.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid password" });
     }
+     if (!user.blockStatus) {
+      return res.status(401).json({ message: "User Blocked By ADMIN" });
+    }
 
     const token = generateToken(email);
     console.log(token)
