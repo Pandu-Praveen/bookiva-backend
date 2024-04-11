@@ -1225,11 +1225,14 @@ app.get("/logout", (req, res) => {
   // console.log(req.cookies.jwt);
   // const { EMAIL } = req.body;
   // const token = generateToken(EMAIL);
-   res.clearCookie("jwt",{
-     httpOnly: true,
-     secure: true,
-     sameSite: "none"
-}).json({ message: "Logout successful" });
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
+  });
+  res.set('Cache-Control', 'no-store'); // Prevent caching
+  res.json({ message: "Logout successful" });
+
   // req.session.destroy();
 
 // Set the cookie with the specified options
