@@ -87,6 +87,11 @@ app.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid password" });
     }
+    res.json({
+      message: "Login successful",
+      role: user.role,
+      blockStatus: user.blockStatus,
+    });
      if (user.blockStatus) {
       return res.status(401).json({ message: "User Blocked By ADMIN" });
     }
@@ -100,11 +105,6 @@ app.post("/login", async (req, res) => {
       secure: true,
       sameSite: "none",
     }); // Cookie expires in 1 hour0
-    res.json({
-      message: "Login successful",
-      role: user.role,
-      blockStatus: user.blockStatus,
-    });
 console.log("login success");
   } catch (error) {
     console.error("Error during sign in:", error);
