@@ -1119,7 +1119,7 @@ app.post("/upload", verifyToken, upload.single("file"), async (req, res) => {
         contentType: req.file.mimetype,
       };
       booking.status = "completed";
-      booking.feedback = `http://localhost:4173/feedback/index.html?${bookingId}`;
+      booking.feedback = `https://bookiva-backend.vercel.app/feedback/index.html?${bookingId}`;
       // Save the updated booking
       await booking.save();
 
