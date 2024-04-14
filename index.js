@@ -196,6 +196,44 @@ app.post("/register", async (req, res) => {
   }
 });
 
+
+app.post("/mobileUser", async (req, res) => {
+  const { email, name } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ email });
+
+    if (user) {
+      if (user.blockStatus) {
+        return res.status(401).json({
+          message: "User Blocked By ADMIN",
+          role: user.role,
+          blockStatus: user.blockStatus,
+        });
+      }
+      return res.status(200).json({ message: "Login successful" });
+    }
+    const newUser = new UserModel({
+      name,
+      email,
+      password: "Bookiva@123",
+    });
+    await newUser.save();
+    const token = generateToken(email);
+    //console.log(token)
+    res.cookie("jwt", token, {
+      expires: new Date(Date.now() + 60 * 1000 * 60 * 60 * 24),
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    }); // Cookie expires in 60 days
+    return res.status(200).json({ message: "Login successful" });
+  } catch (error) {
+    console.error("Error during sign in:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 const verifyToken = (req, res, next) => {
   const token = req.cookies.jwt;
 
@@ -312,6 +350,18 @@ app.post("/modify", verifyToken, async (req, res) => {
     // Update the status based on the provided status
     booking.status = updateStatus;
     await booking.save();
+    sendEmail(
+      booking.name,
+      booking.email,
+      booking.eventname,
+      booking.hallname,
+      new Date(booking.date).toLocaleDateString("en-GB"),
+      booking,
+      booking.status,
+      `<p>
+        Your booking has been ${booking.status}.
+      </p>`
+    ).catch((err) => console.log(err));
 
     // Update other bookings if necessary
     if (currentStatus === "pending" && updateStatus === "denied") {
@@ -478,6 +528,69 @@ app.post("/updateUserStatus", verifyToken, async (req, res) => {
   }
 });
 
+async function blockEmail(email, user) {
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: "pandukar98@gmail.com",
+      pass: "vwwgkxkuzrqyysgc",
+    },
+  });
+  const message = user.blockStatus
+    ? `<p style="color:red;">You has been BLOCKED by Admin, for more information kindly reach out admin office</p>`
+    : `<p style="color:green;">You has been UN-BLOCKED by Admin</p>`;
+
+  let info = await transporter.sendMail({
+    from: "pandu",
+    to: email,
+    subject: `Bookiva`,
+    html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Email Card</title>
+      
+      </head>
+      <body>
+      
+      
+      <div class="card">
+      <img src="cid:icon2" alt="bookiva" style="width: 30px" />
+      <img src="cid:bookiva2" alt="bookiva" style="width: 130px" />
+       
+        <div class="message">
+        
+          ${message}
+        </div>
+        
+   
+      </div>
+      
+      </body>
+      </html>
+      
+      `,
+    attachments: [
+      {
+        filename: "icon2.png",
+        path: "./icon2.png",
+        cid: "icon2",
+      },
+      {
+        filename: "bookiva2.png",
+        path: "./bookiva2.png",
+        cid: "bookiva2",
+      },
+    ],
+  });
+
+  console.log(`Email sent to ${email}: ${info.messageId}`);
+}
+
 app.get("/getmanagementprebook", verifyToken, async (req, res) => {
   const email = req.email;
   const User = await ManagementbookingModel.findOne({
@@ -535,15 +648,33 @@ app.post("/managementbook", verifyToken, async (req, res) => {
     });
 
     // console.log(reject);
-    for (const booking of rejectaccepted) {
+     for (const booking of rejectaccepted) {
       await BookingModel.findByIdAndUpdate(booking._id, {
         status: "denied_temp",
       });
+      sendEmail(
+        booking.name,
+        booking.email,
+        booking.eventname,
+        booking.hallname,
+        booking.date,
+        booking,
+        `<p>Your booking has been cancelled because of the management had booked the respective venue.</p>`
+      ).catch((err) => console.log(err));
     }
     for (const booking of rejectpending) {
       await BookingModel.findByIdAndUpdate(booking._id, {
         status: "denied_temp",
       });
+      sendEmail(
+        booking.name,
+        booking.email,
+        booking.eventname,
+        booking.hallname,
+        booking.date,
+        booking,
+        `<p>Your booking has been cancelled because of the management had booked the respective venue.</p>`
+      ).catch((err) => console.log(err));
     }
     let st = new Date(updateBookingDate.date[0]);
     //console.log("Original Start Time:", st);
@@ -633,6 +764,164 @@ app.post("/managementbook", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 });
+
+
+async function sendEmail(
+  name,
+  email,
+  eventName,
+  hallName,
+  date,
+  booking,
+  status,
+  reason
+) {
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: "pandukar98@gmail.com",
+      pass: "vwwgkxkuzrqyysgc",
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: "pandu",
+    to: email,
+    subject: `Booking ${status.toUpperCase()}`,
+    html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Email Card</title>
+      <style>
+        /* Inline CSS styles */
+        .card {
+          max-width: 400px;
+          margin: 0 auto;
+          padding: 20px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          background-color: #f9f9f9;
+          text-align: center;
+        }
+      
+        .card img {
+          max-width: 100%;
+          height: auto;
+          margin-bottom: 20px;
+        }
+      
+        .message {
+          font-size: 16px;
+          line-height: 1.6;
+          margin-bottom: 20px;
+        }
+      
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          background-color: #007bff;
+          color: #fff;
+          text-decoration: none;
+          border-radius: 5px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 20px;
+        }
+        
+        th, td {
+          padding: 10px;
+          border: 1px solid #ddd;
+          text-align: left;
+        }
+
+        .accepted {
+          color: green;
+        }
+
+        .rejected {
+          color: red;
+        }
+      </style>
+      </head>
+      <body>
+      
+      <div class="card">
+      <img src="cid:icon2" alt="bookiva" style="width: 30px" />
+      <img src="cid:bookiva2" alt="bookiva" style="width: 130px" />
+       
+        <div class="message">
+          ${reason}
+          <p>Booking Details</p>
+        </div>
+        <table>
+        <tr>
+          <th>Name</th>
+          <td>${name}</td>
+        </tr>
+        <tr>
+          <th>Event Name</th>
+          <td>${eventName}</td>
+        </tr>
+        <tr>
+          <th>Hall Name</th>
+          <td>${hallName}</td>
+        </tr>
+        <tr>
+          <th>Date</th>
+          <td>${date}</td>
+        </tr>
+        <tr>
+          <th>Start Time</th>
+          <td>${new Date(booking.starttime).getUTCHours() % 12 || 12}:${
+      (new Date(booking.starttime).getUTCMinutes() < 10 ? "0" : "") +
+      new Date(booking.starttime).getUTCMinutes()
+    } ${new Date(booking.starttime).getUTCHours() < 12 ? "AM" : "PM"}</td>
+        </tr>
+        <tr>
+          <th>End Time</th>
+          <td>${new Date(booking.endtime).getUTCHours() % 12 || 12}:${
+      (new Date(booking.endtime).getUTCMinutes() < 10 ? "0" : "") +
+      new Date(booking.endtime).getUTCMinutes()
+    } ${new Date(booking.endtime).getUTCHours() < 12 ? "AM" : "PM"}</td>
+        </tr>
+        <tr>
+        <th>Status</th>
+        <td class="${
+          status === "accepted" ? "accepted" : "rejected"
+        }" style="font-weight:bold;">${status.toUpperCase()}</td>
+      </tr>
+      </table>
+      <p>Book another slot now.</p>
+        <a href="https://example.com/book" class="button">Book</a>
+      </div>
+      
+      </body>
+      </html>
+      
+      `,
+    attachments: [
+      {
+        filename: "icon2.png",
+        path: "./icon2.png",
+        cid: "icon2",
+      },
+      {
+        filename: "bookiva2.png",
+        path: "./bookiva2.png",
+        cid: "bookiva2",
+      },
+    ],
+  });
+
+  console.log(`Email sent to ${email}: ${info.messageId}`); // Print message ID for each email sent
+}
 
 app.post("/managementprebook", verifyToken, async (req, res) => {
   const { EMAIL, HALL, SEATS, DATES } = req.body;
