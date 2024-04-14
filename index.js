@@ -82,7 +82,8 @@ app.get("/logs", async (req, res) => {
     res.status(500).send("Error fetching logs");
   }
 });
-
+app.use(express.static(path.join(__dirname, "./icon2.png")));
+app.use(express.static(path.join(__dirname, "./bookiva2.png")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ limit: "200mb", extended: true }));
@@ -577,7 +578,7 @@ async function blockEmail(email, user) {
     attachments: [
       {
         filename: "icon2.png",
-        path: "/icon2.png",
+        path: "./icon2.png",
         cid: "icon2",
       },
       {
@@ -909,7 +910,7 @@ async function sendEmail(
     attachments: [
       {
         filename: "icon2.png",
-        path: "/icon2.png",
+        path: "./icon2.png",
         cid: "icon2",
       },
       {
