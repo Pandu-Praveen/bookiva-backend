@@ -577,7 +577,7 @@ async function blockEmail(email, user) {
     attachments: [
       {
         filename: "icon2.png",
-        path: "./icon2.png",
+        path: "/icon2.png",
         cid: "icon2",
       },
       {
@@ -909,7 +909,7 @@ async function sendEmail(
     attachments: [
       {
         filename: "icon2.png",
-        path: "./icon2.png",
+        path: "/icon2.png",
         cid: "icon2",
       },
       {
