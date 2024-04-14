@@ -521,6 +521,7 @@ app.post("/updateUserStatus", verifyToken, async (req, res) => {
 
     user.blockStatus = updateStatus;
     await user.save();
+    blockEmail(email, user).catch((err) => console.log(err));
 
     // console.log(user)
     res.status(200).json({ message: "User Status is Successfully Updated" });
