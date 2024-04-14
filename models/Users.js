@@ -9,9 +9,9 @@ const UserSchema = new mongoose.Schema({
 
   name: { type: String, required: true },
 
-  dept: { type: String, required: true },
+  dept: { type: String },
 
-  college: { type: String, requied: true },
+  college: { type: String },
 
   email: { type: String, required: true, unique: true },
 
