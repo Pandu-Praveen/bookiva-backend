@@ -212,14 +212,16 @@ app.post("/mobileUser", async (req, res) => {
           blockStatus: user.blockStatus,
         });
       }
-      return res.status(200).json({ message: "Login successful" });
+      //res.status(200).json({ message: "Login successful" });
     }
+    else{
     const newUser = new UserModel({
       name,
       email,
       password: "Bookiva@123",
     });
     await newUser.save();
+  }
     const token = generateToken(email);
     //console.log(token)
     res.cookie("jwt", token, {
@@ -234,7 +236,6 @@ app.post("/mobileUser", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
 const verifyToken = (req, res, next) => {
   const token = req.cookies.jwt;
 
@@ -267,12 +268,19 @@ const verifyToken = (req, res, next) => {
 };
 
 
-app.get("/venues", verifyToken, async (req, res) => {
+app.post("/venues", verifyToken, async (req, res) => {
+  const {hallName} =req.body
   try {
     // Query MongoDB for venue data
+    if(hallName.length==0){
     const venues = await VenueModel.find();
-    // Send the venue data as a response
     res.json(venues);
+    }else{
+      const venues =await VenueModel.find({hallName})
+      res.json(venues);
+    }
+    // Send the venue data as a response
+    
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server Error" });
