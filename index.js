@@ -47,7 +47,7 @@ const PORT = 3500;
 
 app.use(
   cors({
-    origin: "http://localhost:4173",
+    origin: ["http://localhost:4173","https://bookiva-frontend.vercel.app/"],
     credentials: true,
   })
 );
