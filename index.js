@@ -215,12 +215,13 @@ app.post("/mobileUser", async (req, res) => {
       //res.status(200).json({ message: "Login successful" });
     }
     else{
-    const newUser = new UserModel({
-      name,
-      email,
-      password: "Bookiva@123",
-    });
-    await newUser.save();
+      const hashedPassword = await bcrypt.hash("Bookiva@123", 10);
+      const newUser = new UserModel({
+        name,
+        email,
+        password: hashedPassword,
+      });
+      await newUser.save();
   }
     const token = generateToken(email);
     //console.log(token)
