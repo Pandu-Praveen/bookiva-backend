@@ -669,15 +669,11 @@ app.post("/managementbook", verifyToken, async (req, res) => {
     et.setUTCHours(ehours, eminutes, eseconds);
     const rejectaccepted = await BookingModel.find({
       date: { $in: updateBookingDate.date },
-      starttime: { $gte: st, $lte: et },
-      endtime: { $gte: st, $lte: et },
       hallname: hall,
       status: "accepted",
     });
     const rejectpending = await BookingModel.find({
       date: { $in: updateBookingDate.date },
-      starttime: { $gte: st, $lte: et },
-      endtime: { $gte: st, $lte: et },
       hallname: hall,
       status: "pending",
     });
