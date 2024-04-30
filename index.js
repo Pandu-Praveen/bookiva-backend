@@ -647,19 +647,43 @@ app.post("/managementbook", verifyToken, async (req, res) => {
       hallname: hall,
     });
     // console.log(updateBookingDate.date);
+    
+    let st = new Date(updateBookingDate.date[0]);
+    //console.log("Original Start Time:", st);
+    let sta = new Date(start);
+    //console.log(sta)
+    const hours = sta.getUTCHours();
+    const minutes = sta.getUTCMinutes();
+    const seconds = sta.getUTCSeconds();
+    st.setUTCHours(hours, minutes, seconds);
+    //console.log("Updated Start Time:", st);
+
+    let et = new Date(
+      updateBookingDate.date[updateBookingDate.date.length - 1]
+    );
+    //console.log("Original End Time:", et);
+    let en = new Date(end);
+    const ehours = en.getUTCHours();
+    const eminutes = en.getUTCMinutes();
+    const eseconds = en.getUTCSeconds();
+    et.setUTCHours(ehours, eminutes, eseconds);
     const rejectaccepted = await BookingModel.find({
       date: { $in: updateBookingDate.date },
+      starttime: { $gte: st, $lte: et },
+      endtime: { $gte: st, $lte: et },
       hallname: hall,
       status: "accepted",
     });
     const rejectpending = await BookingModel.find({
       date: { $in: updateBookingDate.date },
+      starttime: { $gte: st, $lte: et },
+      endtime: { $gte: st, $lte: et },
       hallname: hall,
       status: "pending",
     });
 
     // console.log(reject);
-     for (const booking of rejectaccepted) {
+    for (const booking of rejectaccepted) {
       await BookingModel.findByIdAndUpdate(booking._id, {
         status: "denied_temp",
       });
@@ -684,32 +708,9 @@ app.post("/managementbook", verifyToken, async (req, res) => {
         booking.hallname,
         booking.date,
         booking,
-        `<p>Your booking has been cancelled because of the management had booked the respective venue.</p>`
+        `Your booking has been cancelled because of the management had booked the respective venue`
       ).catch((err) => console.log(err));
     }
-    let st = new Date(updateBookingDate.date[0]);
-    //console.log("Original Start Time:", st);
-    let sta = new Date(start);
-    //console.log(sta)
-    const hours = sta.getUTCHours();
-    const minutes = sta.getUTCMinutes();
-    const seconds = sta.getUTCSeconds();
-    st.setUTCHours(hours, minutes, seconds);
-    //console.log("Updated Start Time:", st);
-
-    let et = new Date(
-      updateBookingDate.date[updateBookingDate.date.length - 1]
-    );
-    //console.log("Original End Time:", et);
-    let en = new Date(end);
-    const ehours = en.getUTCHours();
-    const eminutes = en.getUTCMinutes();
-    const eseconds = en.getUTCSeconds();
-    et.setUTCHours(ehours, eminutes, eseconds);
-    // console.log("Updated End Time:", et);
-
-    //console.log("Updated Start and End Time:", st, et);
-    //console.log(Hall);
     const updateBooking = await ManagementbookingModel.updateOne(
       { email: email, status: "prebooking" },
       {
