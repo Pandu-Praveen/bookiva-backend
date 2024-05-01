@@ -83,7 +83,8 @@ app.get("/logs", async (req, res) => {
   }
 });
 app.use(express.static(path.join(__dirname, "./icon2.png")));
-app.use(express.static(path.join(__dirname, "./bookiva2.png")));
+app.use(express.static(path.join(__dirname, "./bookiva3.png")));
+app.use(express.static(path.join(__dirname, "./bookiva4.png")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ limit: "200mb", extended: true }));
@@ -570,8 +571,8 @@ async function blockEmail(email, user) {
       
       
       <div class="card">
-      <img src="cid:icon2" alt="bookiva" style="width: 30px" />
-      <img src="cid:bookiva2" alt="bookiva" style="width: 130px" />
+     
+      <img src="cid:bookiva3" alt="bookiva" style="width: 130px" />
        
         <div class="message">
         
@@ -592,9 +593,9 @@ async function blockEmail(email, user) {
         cid: "icon2",
       },
       {
-        filename: "bookiva2.png",
-        path: "./bookiva2.png",
-        cid: "bookiva2",
+        filename: "bookiva3.png",
+        path: "./bookiva3.png",
+        cid: "bookiva3",
       },
     ],
   });
@@ -861,8 +862,8 @@ async function sendEmail(
       <body>
       
       <div class="card">
-      <img src="cid:icon2" alt="bookiva" style="width: 30px" />
-      <img src="cid:bookiva2" alt="bookiva" style="width: 130px" />
+  
+      <img src="cid:bookiva3" alt="bookiva" style="width: 130px" />
        
         <div class="message">
           ${reason}
@@ -921,9 +922,9 @@ async function sendEmail(
         cid: "icon2",
       },
       {
-        filename: "bookiva2.png",
-        path: "./bookiva2.png",
-        cid: "bookiva2",
+        filename: "bookiva3.png",
+        path: "./bookiva3.png",
+        cid: "bookiva3",
       },
     ],
   });
