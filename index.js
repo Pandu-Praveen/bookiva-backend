@@ -117,14 +117,14 @@ app.post("/login", async (req, res) => {
     const user = await UserModel.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: "Invalid email" });
+      return res.status(404).json({ message: "Invalid email or password" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     //console.log(isMatch)
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid password" });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
      if (user.blockStatus) {
       return res
